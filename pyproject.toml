@@ -1,6 +1,6 @@
 [project]
 name = "grokfast-pytorch"
-version = "0.0.2"
+version = "0.0.3"
 description = "Grokfast"
 authors = [
     { name = "Phil Wang", email = "lucidrains@gmail.com" }
@@ -24,7 +24,6 @@ classifiers=[
 
 dependencies = [
     "torch>=2.0",
-    "einops>=0.8.0"
 ]
 
 [project.urls]
