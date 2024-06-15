@@ -1,6 +1,6 @@
 ## Grokfast - Pytorch (wip)
 
-Explorations into <a href="https://arxiv.org/html/2405.20233v2">"Grokfast, Accelerated Grokking by Amplifying Slow Gradients"</a>, out of Seoul National University in Korea. In particular, will try it on pathfinder-x (where I have induced grokking before in a small transformer), and also throw NAdam at the same task, since I am curious why the experiments are left out of the paper. If it holds up, will polish it up into a nice package for quick use.
+Explorations into <a href="https://arxiv.org/html/2405.20233v2">"Grokfast, Accelerated Grokking by Amplifying Slow Gradients"</a>, out of Seoul National University in Korea. In particular, will compare it with NAdam on modular addition as well as a few other tasks, since I am curious why those experiments are left out of the paper. If it holds up, will polish it up into a nice package for quick use.
 
 ## Citations
 
