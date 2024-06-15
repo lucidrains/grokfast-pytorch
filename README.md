@@ -24,7 +24,11 @@ model = nn.Linear(10, 1)
 
 from grokfast_pytorch import GrokFastAdamW
 
-opt = GrokFastAdamW(model.parameters(), lr = 1e-4)
+opt = GrokFastAdamW(
+    model.parameters(),
+    lr = 1e-4,
+    weight_decay = 0.1
+)
 
 # forward and backwards
 
