@@ -113,7 +113,7 @@ class GrokFastAdamW(Optimizer):
 
                     # appendix C - line 24 of https://arxiv.org/html/2405.20233v2
 
-                    grad.add_(grok_exp_avg * lamb)
+                    grad.add_(grok_exp_avg, alpha = lamb)
 
                 # bias corrections
 
