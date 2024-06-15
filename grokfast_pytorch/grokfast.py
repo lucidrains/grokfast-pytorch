@@ -94,7 +94,7 @@ class GrokFastAdamW(Optimizer):
 
                 # should grokfast
 
-                should_grokfast = grokfast and steps > grokfast_after_step
+                should_grokfast = grokfast and steps > grokfast_after_step and lamb > 0
 
                 # take care of grok fast if turned on
 
