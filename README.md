@@ -47,6 +47,7 @@ opt.zero_grad()
     - [ ] modular addition
     - [ ] pathfinder-x
     - [ ] run against nadam and some other optimizers
+    - [ ] see if `exp_avg` could be repurposed for amplifying slow grads
 - [ ] add the foreach version only if above experiments turn out well
 
 ## Citations
