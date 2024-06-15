@@ -96,15 +96,16 @@ class GrokFastAdamW(Optimizer):
 
                 should_grokfast = grokfast and steps > grokfast_after_step
 
-                if should_grokfast and not 'grok_exp_avg' in state:
-                    # maintain an ema of the grad
-                    # for amplifying slow gradients, as paper claims it accelerates generalization
-
-                    state['grok_exp_avg'] = grad.clone()
-
                 # take care of grok fast if turned on
 
                 if should_grokfast:
+
+                    if 'grok_exp_avg' not in state:
+                        # maintain an ema of the grad
+                        # for amplifying slow gradients, as paper claims it accelerates generalization
+
+                        state['grok_exp_avg'] = grad.clone()
+
                     grok_exp_avg = state['grok_exp_avg']
 
                     # update grok exp avg
