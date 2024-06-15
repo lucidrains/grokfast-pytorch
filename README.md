@@ -43,11 +43,11 @@ opt.zero_grad()
 
 ## Todo
 
-- [ ] add the foreach version
 - [ ] run all experiments on small transformer
     - [ ] modular addition
     - [ ] pathfinder-x
     - [ ] run against nadam and some other optimizers
+- [ ] add the foreach version only if above experiments turn out well
 
 ## Citations
 
