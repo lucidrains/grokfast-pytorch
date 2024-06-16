@@ -33,7 +33,7 @@ class GrokFastAdamW(Optimizer):
         # in order for fair comparison
         # reduce the learning rate by a factor of (1 + grokfast_lamb)
 
-        if normalize_lr:
+        if grokfast and normalize_lr:
             lr /= (1. + grokfast_lamb)
 
         self._init_lr = lr
