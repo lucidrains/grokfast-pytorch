@@ -22,12 +22,19 @@ class GrokFastAdamW(Optimizer):
         grokfast = True,
         grokfast_alpha = 0.98,
         grokfast_lamb = 2.,
-        grokfast_after_step = 0
+        grokfast_after_step = 0,
+        normalize_lr = True
     ):
         assert lr > 0.
         assert all([0. <= beta <= 1. for beta in betas])
         assert weight_decay >= 0.
         assert eps > 0.
+
+        # in order for fair comparison
+        # reduce the learning rate by a factor of (1 + grokfast_lamb)
+
+        if normalize_lr:
+            lr /= (1. + grokfast_lamb)
 
         self._init_lr = lr
 
