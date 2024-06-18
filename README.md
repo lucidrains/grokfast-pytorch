@@ -4,6 +4,8 @@
 
 Explorations into <a href="https://arxiv.org/html/2405.20233v2">"Grokfast, Accelerated Grokking by Amplifying Slow Gradients"</a>, out of Seoul National University in Korea. In particular, will compare it with NAdam on modular addition as well as a few other tasks, since I am curious why those experiments are left out of the paper. If it holds up, will polish it up into a nice package for quick use.
 
+The official repository can be found <a href="https://github.com/ironjr/grokfast">here</a>
+
 ## Install
 
 ```bash
