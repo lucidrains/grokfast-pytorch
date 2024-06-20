@@ -29,7 +29,7 @@ from grokfast_pytorch import GrokFastAdamW
 opt = GrokFastAdamW(
     model.parameters(),
     lr = 1e-4,
-    weight_decay = 0.1
+    weight_decay = 1e-2
 )
 
 # forward and backwards
