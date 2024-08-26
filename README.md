@@ -62,3 +62,12 @@ opt.zero_grad()
     url     = {https://api.semanticscholar.org/CorpusID:270123846}
 }
 ```
+
+```bibtex
+@misc{kumar2024maintaining,
+    title={Maintaining Plasticity in Continual Learning via Regenerative Regularization},
+    author={Saurabh Kumar and Henrik Marklund and Benjamin Van Roy},
+    year={2024},
+    url={https://openreview.net/forum?id=lyoOWX0e0O}
+}
+```
