@@ -19,6 +19,7 @@ class GrokFastAdamW(Optimizer):
         betas: Tuple[float, float] = (0.9, 0.99),
         weight_decay = 0.,
         eps = 1e-8,
+        regen_reg_rate = 0.,
         grokfast = True,
         grokfast_alpha = 0.98,
         grokfast_lamb = 2.,
@@ -28,7 +29,9 @@ class GrokFastAdamW(Optimizer):
         assert lr > 0.
         assert all([0. <= beta <= 1. for beta in betas])
         assert weight_decay >= 0.
+        assert regen_reg_rate >= 0.
         assert eps > 0.
+        assert not (weight_decay >0. and regen_reg_rate > 0.), 'weight decay and regenerative regularization cannot be used together'
 
         # in order for fair comparison
         # reduce the learning rate by a factor of (1 + grokfast_lamb)
@@ -43,6 +46,7 @@ class GrokFastAdamW(Optimizer):
             betas = betas,
             eps = eps,
             weight_decay = weight_decay,
+            regen_reg_rate = regen_reg_rate,
             grokfast = grokfast,
             grokfast_alpha = grokfast_alpha,
             grokfast_lamb = grokfast_lamb,
@@ -79,12 +83,20 @@ class GrokFastAdamW(Optimizer):
         for group in self.param_groups:
             for p in filter(lambda p: exists(p.grad), group['params']):
 
-                grad, lr, wd, beta1, beta2, eps, grokfast, grokfast_after_step, alpha, lamb, state, init_lr = p.grad, group['lr'], group['weight_decay'], *group['betas'], group['eps'], group['grokfast'], group['grokfast_after_step'], group['grokfast_alpha'], group['grokfast_lamb'], self.state[p], self._init_lr
+                grad, lr, wd, regen_rate, beta1, beta2, eps, grokfast, grokfast_after_step, alpha, lamb, state, init_lr = p.grad, group['lr'], group['weight_decay'], group['regen_reg_rate'], *group['betas'], group['eps'], group['grokfast'], group['grokfast_after_step'], group['grokfast_alpha'], group['grokfast_lamb'], self.state[p], self._init_lr
 
                 # decoupled weight decay
 
                 if wd > 0.:
                     p.mul_(1. - lr / init_lr * wd)
+
+                # regenerative regularization - ICLR 2024
+                # https://openreview.net/forum?id=lyoOWX0e0O
+
+                if regen_rate > 0. and 'param_init' in state:
+                    param_init = state['param_init']
+
+                    p.lerp_(param_init, lr / init_lr * regen_rate)
 
                 # init state if needed
 
@@ -92,6 +104,7 @@ class GrokFastAdamW(Optimizer):
                     state['steps'] = 0
                     state['exp_avg'] = torch.zeros_like(grad)
                     state['exp_avg_sq'] = torch.zeros_like(grad)
+                    state['param_init'] = p.data.clone()
 
                 # get some of the states
 
