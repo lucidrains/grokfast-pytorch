@@ -71,3 +71,14 @@ opt.zero_grad()
     url={https://openreview.net/forum?id=lyoOWX0e0O}
 }
 ```
+
+```bibtex
+@inproceedings{anonymous2024the,
+    title   = {The Complexity Dynamics of Grokking},
+    author  = {Anonymous},
+    booktitle = {Submitted to The Thirteenth International Conference on Learning Representations},
+    year    = {2024},
+    url     = {https://openreview.net/forum?id=07N9jCfIE4},
+    note    = {under review}
+}
+```
