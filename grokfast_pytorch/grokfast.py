@@ -1,5 +1,7 @@
 from __future__ import annotations
-from typing import Tuple, Callable
+from typing import Callable
+
+from functools import partial
 
 import torch
 from torch.optim.optimizer import Optimizer
@@ -9,6 +11,32 @@ from torch.optim.optimizer import Optimizer
 def exists(val):
     return val is not None
 
+# tensor helpers
+
+def log(t, eps = 1e-20):
+    return t.clamp(min = eps).log()
+
+def entropy(prob):
+    return (-prob * log(prob)).sum(dim = -1)
+
+def spectral_entropy_reg_loss_hook(optimizer, weight, *args, **kwargs):
+    loss = torch.tensor(0.).requires_grad_()
+
+    for param_group in optimizer.param_groups:
+        for param in param_group['params']:
+            if param.ndim < 2:
+                continue
+
+            *_, row, col = param.shape
+            reshaped_param = param.reshape(-1, row, col)
+
+            singular_values = torch.linalg.svdvals(reshaped_param)
+            spectral_prob = singular_values.softmax(dim = -1)
+            spectral_entropy = entropy(spectral_prob).sum()
+            loss = loss + spectral_entropy
+
+    (loss * weight).backward()
+
 # class
 
 class GrokFastAdamW(Optimizer):
@@ -16,7 +44,7 @@ class GrokFastAdamW(Optimizer):
         self,
         params,
         lr = 1e-4,
-        betas: Tuple[float, float] = (0.9, 0.99),
+        betas: tuple[float, float] = (0.9, 0.99),
         weight_decay = 0.,
         eps = 1e-8,
         regen_reg_rate = 0.,
@@ -24,7 +52,9 @@ class GrokFastAdamW(Optimizer):
         grokfast_alpha = 0.98,
         grokfast_lamb = 2.,
         grokfast_after_step = 0,
-        normalize_lr = True
+        normalize_lr = True,
+        add_spectral_entropy_reg = False,
+        spectral_entropy_reg_weight = 0.1
     ):
         assert lr > 0.
         assert all([0. <= beta <= 1. for beta in betas])
@@ -54,6 +84,14 @@ class GrokFastAdamW(Optimizer):
         )
 
         super().__init__(params, defaults)
+
+        # maybe spectral entropy reg
+        # https://openreview.net/forum?id=07N9jCfIE4
+
+        if not add_spectral_entropy_reg:
+            return
+
+        self.register_step_pre_hook(partial(spectral_entropy_reg_loss_hook, self, spectral_entropy_reg_weight))
 
     def turn_on_grokfast(self):
         for group in self.param_groups:
