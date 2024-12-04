@@ -19,10 +19,15 @@ def log(t, eps = 1e-20):
 def entropy(prob):
     return (-prob * log(prob)).sum(dim = -1)
 
-def spectral_entropy_reg_loss_hook(optimizer, weight, *args, **kwargs):
+def spectral_entropy_reg_loss_hook(optimizer, *args, **kwargs):
     loss = torch.tensor(0.).requires_grad_()
 
     for param_group in optimizer.param_groups:
+        if not param['add_spectral_entropy_reg']:
+            continue
+
+        weight = param['spectral_entropy_reg_weight']
+
         for param in param_group['params']:
             if param.ndim < 2:
                 continue
@@ -80,7 +85,9 @@ class GrokFastAdamW(Optimizer):
             grokfast = grokfast,
             grokfast_alpha = grokfast_alpha,
             grokfast_lamb = grokfast_lamb,
-            grokfast_after_step = grokfast_after_step
+            grokfast_after_step = grokfast_after_step,
+            add_spectral_entropy_reg = add_spectral_entropy_reg,
+            spectral_entropy_reg_weight = spectral_entropy_reg_weight
         )
 
         super().__init__(params, defaults)
@@ -91,7 +98,7 @@ class GrokFastAdamW(Optimizer):
         if not add_spectral_entropy_reg:
             return
 
-        self.register_step_pre_hook(partial(spectral_entropy_reg_loss_hook, self, spectral_entropy_reg_weight))
+        self.register_step_pre_hook(partial(spectral_entropy_reg_loss_hook, self))
 
     def turn_on_grokfast(self):
         for group in self.param_groups:
